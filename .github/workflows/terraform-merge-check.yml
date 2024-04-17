@@ -3,11 +3,13 @@ name: terraform-merge-check
 on:
   pull_request:
     types: [opened, reopened]
-
 jobs:
 
   terraform-merge-check:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
     steps:
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v3
