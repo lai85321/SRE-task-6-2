@@ -36,15 +36,15 @@ jobs:
       - name: Terraform Plan Comment
         uses: actions/github-script@v6
         env:
-          plan: "${{ steps.plan.outputs.stdout }}"
+          plan: ${{ steps.plan.outputs.stdout }}
         with:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
-           const plan_output = `${{ steps.plan.outputs.plan_output }}`;
-           const output = `#### Terraform Plan 結果
-           \`\`\`\n
-           ${process.env.plan}
-           \`\`\`
+            const plan_output = `${process.env.plan}`;
+            const output = `#### Terraform Plan 結果
+            \`\`\`\n
+            ${plan_output}
+            \`\`\``;
       
             github.rest.issues.createComment({
               issue_number: context.payload.pull_request.number,
