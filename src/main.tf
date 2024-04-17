@@ -16,7 +16,7 @@ resource "aws_vpc" "vpc" {
   cidr_block = var.vpc_cidr_block
 }
 
-resource "aws_subnet" "main" {
+resource "aws_subnet" "subnet" {
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.subnet_cidr_block
   map_public_ip_on_launch = true
@@ -41,7 +41,7 @@ data "aws_ami" "amazon" {
 resource "aws_instance" "web" {
   ami           = data.aws_ami.amazon.id
   instance_type = var.instance_type
-  subnet_id     = aws_subnet.main.id
+  subnet_id     = aws_subnet.subnet.id
 }
 
 output "INSTANCE_IP" {
