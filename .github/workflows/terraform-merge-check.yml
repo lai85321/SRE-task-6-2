@@ -44,7 +44,7 @@ jobs:
           script: |
             const output = `#### Terraform Plan 結果
             \`\`\`diff
-            ${{steps.plan.outputs.plan_output}}
+            ${steps.plan.outputs.plan_output.split('\n').join('\n      ')}
             \`\`\``;
 
             github.rest.issues.createComment({
