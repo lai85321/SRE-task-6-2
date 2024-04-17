@@ -1,0 +1,16 @@
+name: terraform-push-check
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  terraform-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: hashicorp/setup-terraform@v3
+
+    - run: terraform fmt

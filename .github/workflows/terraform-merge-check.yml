@@ -1,0 +1,50 @@
+name: terraform-merge-check
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  terraform-merge-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-role
+          aws-region: ap-northeast-1
+          role-session-name: Session-GitHubActions
+
+      - run: terraform init
+      - run: terraform fmt
+      - run: terraform validate
+
+      - name: Terraform Plan Status
+        id: plan
+        run: |
+          terraform plan -no-color
+          plan_output=$(terraform plan -no-color)
+          echo "plan_output=$plan_output" >> $GITHUB_OUTPUT
+
+      - name: Terraform Plan Comment
+        uses: actions/github-script@v6
+        if: steps.plan.outputs.plan_output != ''
+        with:
+          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          script: |
+            const output = `#### Terraform Plan 結果\`\`\`diff\n${process.env.PLAN_OUTPUT}\n\`\`\``;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
