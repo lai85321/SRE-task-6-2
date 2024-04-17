@@ -31,9 +31,12 @@ jobs:
       - name: Terraform Plan Status
         id: plan
         run: |
-          terraform plan -no-color -out=plan.out
-          echo "plan_output=plan.out" >> $GITHUB_OUTPUT
-
+         terraform plan -no-color -out=plan.out
+         plan_output=$(cat plan.out)
+         echo "plan_output<<EOF" >> $GITHUB_OUTPUT
+         echo "$plan_output" >> $GITHUB_OUTPUT
+         echo "EOF" >> $GITHUB_OUTPUT
+         
       - name: Terraform Plan Comment
         uses: actions/github-script@v6
         with:
