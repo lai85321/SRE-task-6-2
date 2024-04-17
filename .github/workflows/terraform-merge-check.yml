@@ -42,10 +42,11 @@ jobs:
         with:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
-            const output = `#### Terraform Plan 結果
-            \`\`\`diff
-            ${(await getInput('plan_output')).split('\n').join('\n      ')}
-            \`\`\``;
+           const plan_output = `${{ steps.plan.outputs.plan_output }}`;
+           const output = `#### Terraform Plan 結果
+           \`\`\`diff
+           ${plan_output.split('\n').join('\n      ')}
+           \`\`\``;
       
             github.rest.issues.createComment({
               issue_number: context.payload.pull_request.number,
