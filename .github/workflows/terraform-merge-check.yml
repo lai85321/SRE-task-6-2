@@ -32,7 +32,7 @@ jobs:
         id: plan
         run: |
           terraform plan -no-color -out=plan.out
-          echo "plan_output=$(cat plan.out)" >> $GITHUB_OUTPUT
+          echo "plan_output=plan.out" >> $GITHUB_OUTPUT
 
       - name: Terraform Plan Comment
         uses: actions/github-script@v6
