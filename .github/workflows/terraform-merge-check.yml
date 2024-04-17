@@ -32,8 +32,9 @@ jobs:
         id: plan
         run: |
           terraform plan -no-color
-          plan_output=$(terraform plan -no-color)
-          echo "plan_output=$plan_output" >> $GITHUB_OUTPUT
+          plan_output="$(terraform plan -no-color)"
+          echo "test plan"
+          echo plan_output
 
       - name: Terraform Plan Comment
         uses: actions/github-script@v6
@@ -41,7 +42,7 @@ jobs:
         with:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
-            const output = `#### Terraform Plan 結果\`\`\`diff\n${process.env.PLAN_OUTPUT}\n\`\`\``;
+            const output = `#### Terraform Plan 結果\`\`\`diff\n${$plan_output}\n\`\`\``;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
