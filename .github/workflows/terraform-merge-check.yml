@@ -32,21 +32,19 @@ jobs:
         id: plan
         run: |
          terraform plan -no-color -out=plan.out
-         plan_output=$(cat plan.out)
-         echo "plan_output<<EOF" >> $GITHUB_OUTPUT
-         echo "$plan_output" >> $GITHUB_OUTPUT
-         echo "EOF" >> $GITHUB_OUTPUT
          
       - name: Terraform Plan Comment
         uses: actions/github-script@v6
+        env:
+          plan: "${{ steps.plan.outputs.stdout }}"
         with:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
            const plan_output = `${{ steps.plan.outputs.plan_output }}`;
            const output = `#### Terraform Plan 結果
-           \`\`\`diff
-           ${plan_output.split('\n').join('\n      ')}
-           \`\`\``;
+           \`\`\`\n
+           ${process.env.plan}
+           \`\`\`
       
             github.rest.issues.createComment({
               issue_number: context.payload.pull_request.number,
