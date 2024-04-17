@@ -31,19 +31,21 @@ jobs:
       - name: Terraform Plan Status
         id: plan
         run: |
-          terraform plan -no-color -out=plan.out
-          echo "plan_output=plan.out" >> $GITHUB_OUTPUT
-
+         terraform plan -no-color -out=plan.out
+         
       - name: Terraform Plan Comment
         uses: actions/github-script@v6
+        env:
+          plan: ${{ steps.plan.outputs.stdout }}
         with:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
+            const plan_output = `${process.env.plan}`;
             const output = `#### Terraform Plan 結果
-            \`\`\`diff
-            ${{steps.plan.outputs.plan_output}}
+            \`\`\`\n
+            ${plan_output}
             \`\`\``;
-
+      
             github.rest.issues.createComment({
               issue_number: context.payload.pull_request.number,
               owner: context.repo.owner,
