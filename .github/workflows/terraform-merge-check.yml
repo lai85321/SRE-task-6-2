@@ -37,11 +37,10 @@ jobs:
 
       - name: Terraform Plan Comment
         uses: actions/github-script@v6
-        if: steps.plan.outputs.plan_output != ''
         with:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
-            const output = `#### Terraform Plan 結果\`\`\`diff\n${process.env.PLAN_OUTPUT}\n\`\`\``;
+            const output = `#### Terraform Plan 結果\`\`\`diff\n${steps.plan.outputs.stdout}\n\`\`\``;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
